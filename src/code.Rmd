@@ -40,6 +40,7 @@ library("survival")
 ```
 
 ## EDA
+Univariate variable
 
 ```{r Number of measures, eval = TRUE, warning = FALSE, echo = FALSE, message = FALSE, results = "hide"}
 length(ovarian$futime)
@@ -49,6 +50,7 @@ length(ovarian$resid.ds)
 length(ovarian$rx)
 length(ovarian$ecog.ps)
 ```
+--\> same number of measures for all variables
 
 ```{r Statistics Summary, eval = TRUE, warning = FALSE, echo = FALSE, message = FALSE, fig.height = 6}
 
@@ -168,7 +170,6 @@ print(paste("Correlation coefficient:", round(correlation, 2)))
 
 dev.off()
 ```
-
 
 ```{r Survival Times Box Plots, eval = TRUE, warning = FALSE, echo = FALSE, message = FALSE, fig.height = 6}
 
