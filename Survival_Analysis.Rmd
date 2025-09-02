@@ -1,0 +1,361 @@
+---
+title: "Survival Analysis Report"
+subtitle: "Survival Analysis of the Ovarian Cancer"
+author: "Charlotte Daumal"
+date: "30th June 2024"
+output:
+  pdf_document:
+    always_allow_html: true
+    toc: true
+    number_sections: true
+    pandoc_args: [
+      "--pdf-engine=pdflatex",  # Specify pdflatex as the PDF engine
+      "-V geometry:margin=2.5cm"  # Set the margin directly with pandoc
+    ]
+header-includes:
+  - \usepackage{booktabs}  # Example of additional LaTeX packages you may want to include
+
+---
+
+```{r R_SetUp, eval = TRUE, warning = FALSE, echo = FALSE, message = FALSE, results = "hide"}
+
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache =TRUE)
+rm(list = ls())
+
+if (!requireNamespace("survival", quietly = TRUE))
+  install.packages("survival")
+if (!requireNamespace("knitr", quietly = TRUE))
+  install.packages("knitr")
+if (!requireNamespace("kableExtra", quietly = TRUE))
+  install.packages("kableExtra")
+if (!requireNamespace("MASS", quietly = TRUE))
+  install.packages("MASS")
+
+```
+
+```{r data loading, eval = TRUE, warning = FALSE, echo = FALSE, message = FALSE, results = "hide"}
+library("survival")
+```
+
+## Introduction/Background
+
+-   brief statement of scientific question
+-   all variables defined
+
+## EDA
+
+Univariate variable
+
+```{r Number of measures, eval = TRUE, warning = FALSE, echo = FALSE, message = FALSE, results = "hide"}
+length(ovarian$futime)
+length(ovarian$fustat)
+length(ovarian$age)
+length(ovarian$resid.ds)
+length(ovarian$rx)
+length(ovarian$ecog.ps)
+```
+
+--\> same number of measures for all variables
+
+```{r Statistics Summary, eval = TRUE, warning = FALSE, echo = FALSE, message = FALSE, fig.height = 6}
+
+library(knitr)
+library(kableExtra)
+
+summary_stats = summary(ovarian)
+kable(summary_stats, format = "html") %>%
+  kable_styling(full_width = FALSE) %>%
+  column_spec(1)
+
+```
+
+```{r Density Plot, eval = TRUE, warning = FALSE, echo = FALSE, message = FALSE, fig.height = 3, fig.width=20}
+
+dens1 <- density(ovarian$futime)
+max_density1 <- max(dens1$y)
+max_x1 <- dens1$x[which.max(dens1$y)]
+
+dens2 <- density(ovarian$age)
+max_density2 <- max(dens2$y)
+max_x2 <- dens2$x[which.max(dens2$y)]
+
+pdf("Distributions.pdf", width = 10, height = 5)
+
+par(mfrow=c(1,2))
+hist(ovarian$futime, main = "", xlab = "Survival time (days)")
+hist(ovarian$age, main = "", xlab = " Age (years)")
+
+dev.off()
+
+print(max_x1)
+print(max_x2)
+
+```
+
+```{r}
+print(ovarian$ecog.ps)
+```
+
+```{r fig.height = 6, fig.width=10}
+freq_table_fustat <- table(ovarian$fustat)
+print(freq_table_fustat)
+
+freq_table_residds <- table(ovarian$resid.ds)
+print(freq_table_residds)
+
+freq_table_rx <- table(ovarian$rx)
+print(freq_table_rx)
+
+freq_table_ecogps <- table(ovarian$ecog.ps)
+print(freq_table_ecogps)
+
+my_colors <- c("lightblue", "lightgreen")
+
+pdf("BarCharts_CategoricalVariables.pdf", width = 10, height = 7)
+
+par(mfrow=c(1,4))
+barplot(freq_table_fustat, 
+        main = "",
+        xlab = "Censoring status (fustat)",
+        ylab = "Frequency",
+        names.arg = c("0", "1"),
+        ylim = c(0, 18),
+        col = my_colors,
+        cex.axis = 1.4, 
+        cex.lab = 1.4)
+barplot(freq_table_residds, 
+        main = "",
+        xlab = "Residual disease (resid.ds)",
+        ylab = "Frequency",
+        names.arg = c("1", "2"),
+        ylim = c(0, 18),
+        col = my_colors,
+        cex.axis = 1.4, 
+        cex.lab = 1.4)
+barplot(freq_table_rx, 
+        main = "",
+        xlab = "Treatement (rx)",
+        ylab = "Frequency",
+        names.arg = c("1", "2"),
+        ylim = c(0, 18),
+        col = my_colors,
+        cex.axis = 1.4, 
+        cex.lab = 1.4)
+barplot(freq_table_ecogps, 
+        main = "",
+        xlab = "ECOG perf. status (ecog.ps)",
+        ylab = "Frequency",
+        names.arg = c("1", "2"), 
+        ylim = c(0, 18),
+        col = my_colors,
+        cex.axis = 1.4, 
+        cex.lab = 1.4)
+
+dev.off()
+
+```
+
+```{r}
+
+pdf("Scatter_plot.pdf", width = 10, height = 5)
+
+# Bivariate analysis: Scatter plot
+plot(ovarian$age, ovarian$futime,
+     xlab = "Age (years)",
+     ylab = "Survival time (days)",
+     main = "",
+     pch = 16,
+     cex.axis = 1.2, 
+     cex.lab = 1.2)
+lines(lowess(ovarian$age, ovarian$futime), col = "red", lwd = 2)
+
+# Calculate and print correlation coefficient
+correlation <- cor(ovarian$age, ovarian$futime)
+print(paste("Correlation coefficient:", round(correlation, 2)))
+
+dev.off()
+```
+
+
+```{r Survival Times Box Plots, eval = TRUE, warning = FALSE, echo = FALSE, message = FALSE, fig.height = 6}
+
+pdf("Boxplots.pdf", width = 7, height = 7)
+
+par(mfrow=c(2,2))
+boxplot(futime ~ fustat, data = ovarian, xlab = "Censoring status (fustat)", ylab = "Survival time (days)", main = "", cex.axis = 1.1, cex.lab = 1.1)
+boxplot(futime ~ resid.ds, data = ovarian, xlab = "Residual disease (resid.ds)", ylab="", main = "", cex.axis = 1.1, cex.lab = 1.1)
+boxplot(futime ~ rx, data = ovarian, xlab = "Treatment (rx)", ylab="Survival time (days)", main = "", cex.axis = 1.1, cex.lab = 1.1)
+boxplot(futime ~ ecog.ps, data = ovarian, xlab = "ECOG perf. status (ecog.ps)", ylab="", main = "", cex.axis = 1.1, cex.lab = 1.1)
+
+dev.off()
+
+```
+
+```{r Ages Box Plot, eval = TRUE, warning = FALSE, echo = FALSE, message = FALSE, fig.height = 6}
+
+print(ovarian$fustat)
+print(ovarian$age)
+
+```
+
+```{r Scatter Plot Age vs. Survival Time, eval = TRUE, warning = FALSE, echo = FALSE, message = FALSE, fig.height = 6}
+
+# Extract the follow-up times and fustat values
+follow_up_times <- ovarian$futime
+fustat_values <- ovarian$fustat
+
+# Combine them into a data frame for easier manipulation
+data <- data.frame(follow_up_times, fustat_values)
+
+# Split the data into two groups based on the levels of fustat
+group1 <- data$follow_up_times[data$fustat_values == 1]
+group2 <- data$follow_up_times[data$fustat_values == 2]
+
+# Perform a T-test
+t_test_result <- t.test(group1, group2)
+
+# Print the T-test results
+print(t_test_result)
+
+```
+
+## Model Fitting
+
+-   KM (write out estimator and variance) + log-rank test
+-   state null / alt hyps,
+-   value of test stat,
+-   give null dist of test stat,
+-   p-value,
+-   conclusion (reject / do not reject)
+-   state how model fitted (ie, maximum partial likelihood)
+-   CLEARLY describe how model selected
+-   define all terms
+
+### Kaplan-Meier Estimator
+
+Estimator: The Kaplan-Meier estimator is used to estimate the survival function S(t), which gives the probability that an individual survives beyond time t. The variance of the Kaplan-Meier estimator can be computed using Greenwood's formula. --\> write formulas in LaTex of variance and Kpalan-Meier estimator
+
+```{r}
+
+fit_km <- survfit(Surv(futime, fustat) ~ 1, data = ovarian)
+var_km <- summary(fit_km)$std.err^2
+summary(fit_km)
+
+```
+
+Log Rank Test: Hypothesis: - Null hypothesis: There is no difference in survival between the two treatments. - Alternative hypothesis: There is a difference in survival between the two treatments.
+
+The log-rank test statistic X\^2 is used to test the difference in survival curves between groups.
+
+```{r}
+
+lr_test <- survdiff(Surv(futime, fustat) ~ rx, data = ovarian)
+test_stat <- lr_test$chisq
+print(lr_test)
+
+```
+
+Under the null hypothesis, the test statistic follows a chi-squared distribution with degrees of freedom equal to the number of groups minus one.
+
+Compare the p-value to your significance level (e.g., 0.05). If p-value is less than 0.05, you reject the null hypothesis; otherwise, you do not reject it.
+
+### Cox Regression
+
+Survival models, including Cox proportional hazards models which are common in survival analysis, are fitted using maximum partial likelihood estimation.
+
+```{r}
+
+fit_cox <- coxph(Surv(futime, fustat) ~ rx + age + resid.ds, data = ovarian)
+summary(fit_cox)
+
+```
+
+Describe how you selected the variables (covariates) in your model. Common methods include stepwise selection based on AIC (Akaike Information Criterion) or BIC (Bayesian Information Criterion), or subject matter expertise.
+
+```{r}
+
+library(MASS)
+fit_cox_selected <- stepAIC(fit_cox, direction = "both")
+summary(fit_cox_selected)
+
+```
+
+## Model Assessment
+
+Cox Proportional Hazards Assumptions: 1. Cox Proportional Hazards Assumption -\> Hazard ratios for each variable are constant over time (proportional hazards). 2. Linear Form for Covariates -\> The relationship between each continuous covariate and the log-hazard is linear. 3. No Outliers -\> No influential data points that significantly affect the model's parameters.
+
+### Schoenfeld Residuals
+
+Purpose: assess whether the covariates satisfy the proportional hazards assumption If the plotted Schoenfeld residuals show a clear pattern (e.g., non-zero slope over time or a systematic deviation from zero), this indicates violation of the PH assumption.
+
+```{r}
+
+ph_test <- cox.zph(fit_cox)
+
+pdf("Schoenfeld.pdf", width = 10, height = 4)
+
+par(mfrow=c(1,3))
+plot(ph_test, cex.axis = 1.4, cex.lab = 1.4)
+
+dev.off()
+
+```
+
+### Martingale Residuals
+
+Purpose:check if relationship between continuous variables and log-hazard is linear. A nonlinear pattern in the residuals suggests a potential violation of the linear form assumption.
+
+```{r}
+
+martingale_resid <- residuals(fit_cox, type = "martingale")
+
+pdf("Martingale.pdf", width = 10, height = 4)
+
+par(mfrow=c(1,3))
+boxplot(martingale_resid ~ ovarian$rx, xlab = "Treatment group", ylab = "Martingale residuals", main = "", col = c("lightblue", "lightgreen"), cex.axis = 1.4, cex.lab = 1.4)
+abline(h = 0, lty = 2, col = "red", lwd = 2)
+plot(ovarian$age, martingale_resid, main = "", xlab = "Age (in years)", ylab = "Martingale residuals",  pch = 16,
+cex.axis = 1.4, cex.lab = 1.4)
+boxplot(martingale_resid ~ ovarian$rx, xlab = "Presence of residual disease", ylab = "Martingale residuals", main = "", col = c("lightblue", "lightgreen"), cex.axis = 1.4, cex.lab = 1.4)
+abline(h = 0, lty = 2, col = "red", lwd = 2)
+
+dev.off()
+
+```
+
+### Deviance Residuals
+
+Purpose: identify influential observations that may impact model fit. Outliers are identified by large absolute values of deviance residuals.
+
+```{r}
+deviance_resid <- residuals(fit_cox, type = "deviance")
+
+pdf("Deviance.pdf", width = 10, height = 4)
+
+par(mfrow=c(1,3))
+boxplot(deviance_resid ~ ovarian$rx, xlab = "Treatment group", ylab = "Deviance residuals", main = "", col = c("lightblue", "lightgreen"), cex.axis = 1.4, cex.lab = 1.4)
+abline(h = 0, lty = 2, col = "red", lwd = 2)
+plot(ovarian$age, deviance_resid, main = "", xlab = "Age (in years)", ylab = "Deviance residuals",  pch = 16,
+cex.axis = 1, cex.lab = 1)
+boxplot(deviance_resid ~ ovarian$resid.ds, xlab = "Presence of residual disease", ylab = "Deviance residuals", main = "", col = c("lightblue", "lightgreen"), cex.axis = 1.4, cex.lab = 1.4)
+abline(h = 0, lty = 2, col = "red", lwd = 2)
+
+dev.off()
+```
+
+## Final Model
+
+-   max 2 significative digits on coefs
+-   hat on response variable
+-   (ok if coefs are in table)
+
+## Conclusion
+
+-   recap analysis
+-   state main findings
+
+## References
+
+-   references for presentation of background, importance of validation of hypothesis, presentation of potential models in a survival analysis
