@@ -1,7 +1,7 @@
 # Which Factors Matter? A Survival Analysis of Advanced Ovarian Carcinoma
 
 **Author:** Charlotte Daumal   
-**Context:** This project was completed as part of the *Applied Biostatistics* course taught by Prof. Darlene Goldstein  
+**Context:** This project was completed as part of the *Applied Biostatistics* course taught by Prof. Darlene Goldstein at EPFL  
 **Language:** R  
 **Date:** June 2024  
 
