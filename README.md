@@ -1,4 +1,4 @@
-# Investigation of key factors influencing survival in patients with advanced ovarian carcinoma 
+# Which Factors Matter? A Survival Analysis of Advanced Ovarian Carcinoma
 
 **Author:** Charlotte Daumal   
 **Context:** This project was completed as part of the *Applied Biostatistics* course taught by Prof. Darlene Goldstein  
