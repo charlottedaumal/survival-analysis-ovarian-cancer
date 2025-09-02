@@ -23,20 +23,20 @@ The analysis includes:
 
 ## 💻 Repository Structure
 
-An overview of the contents of this repository:
+Here is an overview of the contents of this repository:
 
 - `.gitattributes` — Git configuration file for cross-platform consistency  
 - `.gitignore` — Specifies files and directories to be excluded from version control  
 
-- `src/` — Contains the RMarkdown source code used to generate the report  
+- `src/` — Contains the RMarkdown source code used to perform the statistical analysis and to generate the figures for the report  
   └── `survival_analysis_report.Rmd`  
 
 - `figures/` — Includes the output figures (in PDF format) used in the final report  
   └── `*.pdf`  
 
 - `report_final/` — Folder containing the final deliverables  
-  ├── `00_Individual_Report_Applied_Biostatistics.pdf` — Complete version of the final report  
-  └── `first_page_preview.png` — Preview image of the report’s first page (used in the README)
+  ├── `Final_Report.pdf` — Complete version of the final report  
+  └── `first_report_preview.png` — Preview image of the report’s first page (used in the README)
 
 ---
 
