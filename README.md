@@ -59,7 +59,7 @@ The dataset consists of the following clinical and demographic variables:
 
 ![Preview – First Page of the Report](report/final_report_preview.png)
 
-🗂 The full report is available in PDF format in the `report` folder.
+The full report is available in PDF format in the `report` folder.
 
 ---
 
