@@ -1,6 +1,6 @@
 ---
-title: "Survival Analysis Report"
-subtitle: "Survival Analysis of the Ovarian Cancer"
+title: "Survival Analysis Code"
+subtitle: "Investigation of key factors influencing survival in patients with advanced ovarian carcinoma"
 author: "Charlotte Daumal"
 date: "30th June 2024"
 output:
@@ -39,14 +39,7 @@ if (!requireNamespace("MASS", quietly = TRUE))
 library("survival")
 ```
 
-## Introduction/Background
-
--   brief statement of scientific question
--   all variables defined
-
 ## EDA
-
-Univariate variable
 
 ```{r Number of measures, eval = TRUE, warning = FALSE, echo = FALSE, message = FALSE, results = "hide"}
 length(ovarian$futime)
@@ -56,8 +49,6 @@ length(ovarian$resid.ds)
 length(ovarian$rx)
 length(ovarian$ecog.ps)
 ```
-
---\> same number of measures for all variables
 
 ```{r Statistics Summary, eval = TRUE, warning = FALSE, echo = FALSE, message = FALSE, fig.height = 6}
 
@@ -223,19 +214,9 @@ print(t_test_result)
 
 ## Model Fitting
 
--   KM (write out estimator and variance) + log-rank test
--   state null / alt hyps,
--   value of test stat,
--   give null dist of test stat,
--   p-value,
--   conclusion (reject / do not reject)
--   state how model fitted (ie, maximum partial likelihood)
--   CLEARLY describe how model selected
--   define all terms
-
 ### Kaplan-Meier Estimator
 
-Estimator: The Kaplan-Meier estimator is used to estimate the survival function S(t), which gives the probability that an individual survives beyond time t. The variance of the Kaplan-Meier estimator can be computed using Greenwood's formula. --\> write formulas in LaTex of variance and Kpalan-Meier estimator
+Estimator: The Kaplan-Meier estimator is used to estimate the survival function S(t), which gives the probability that an individual survives beyond time t. The variance of the Kaplan-Meier estimator can be computed using Greenwood's formula.
 
 ```{r}
 
@@ -258,7 +239,6 @@ print(lr_test)
 ```
 
 Under the null hypothesis, the test statistic follows a chi-squared distribution with degrees of freedom equal to the number of groups minus one.
-
 Compare the p-value to your significance level (e.g., 0.05). If p-value is less than 0.05, you reject the null hypothesis; otherwise, you do not reject it.
 
 ### Cox Regression
@@ -305,7 +285,7 @@ dev.off()
 
 ### Martingale Residuals
 
-Purpose:check if relationship between continuous variables and log-hazard is linear. A nonlinear pattern in the residuals suggests a potential violation of the linear form assumption.
+Purpose: check if relationship between continuous variables and log-hazard is linear. A nonlinear pattern in the residuals suggests a potential violation of the linear form assumption.
 
 ```{r}
 
@@ -344,18 +324,3 @@ abline(h = 0, lty = 2, col = "red", lwd = 2)
 
 dev.off()
 ```
-
-## Final Model
-
--   max 2 significative digits on coefs
--   hat on response variable
--   (ok if coefs are in table)
-
-## Conclusion
-
--   recap analysis
--   state main findings
-
-## References
-
--   references for presentation of background, importance of validation of hypothesis, presentation of potential models in a survival analysis
