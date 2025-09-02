@@ -1,7 +1,7 @@
 # Investigation of key factors influencing survival in patients with advanced ovarian carcinoma 
 
 **Author:** Charlotte Daumal   
-**Context:** Project part of the 'Applied Biostatistics' course supervised by Prof. Darlene Goldstein.
+**Context:** This project was completed as part of the *Applied Biostatistics* course taught by Prof. Darlene Goldstein
 **Language:** R  
 **Date:** June 2024
 
@@ -21,17 +21,22 @@ The analysis includes:
 
 ---
 
-## 📁 Repository Structure
+## 💻 Repository Structure
 
-├── .gitattributes # Standard Git attributes
-├── .gitignore # Files/folders to be excluded from version control
-├── src/ # Source code in RMarkdown (.Rmd) format
-│ └── survival_analysis_report.Rmd
-├── figures/ # PDF figures generated and used in the report
-│ └── *.pdf
-├── report_final/ # Final outputs
-│ ├── 00_Individual_Report_Applied_Biostatistics.pdf
-│ └── first_page_preview.png
+An overview of the contents of this repository:
+
+- `.gitattributes` — Git configuration file for cross-platform consistency  
+- `.gitignore` — Specifies files and directories to be excluded from version control  
+
+- `src/` — Contains the RMarkdown source code used to generate the report  
+  └── `survival_analysis_report.Rmd`  
+
+- `figures/` — Includes the output figures (in PDF format) used in the final report  
+  └── `*.pdf`  
+
+- `report_final/` — Folder containing the final deliverables  
+  ├── `00_Individual_Report_Applied_Biostatistics.pdf` — Complete version of the final report  
+  └── `first_page_preview.png` — Preview image of the report’s first page (used in the README)
 
 ---
 
@@ -57,6 +62,8 @@ The dataset consists of the following clinical and demographic variables:
 🗂 The full report is available in PDF format in the `report` folder.
 
 ---
+
+## License
 
 This project is for educational purposes and does not provide medical advice.  
 Content © Charlotte Daumal. Academic use only.
