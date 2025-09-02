@@ -1,9 +1,9 @@
 # Investigation of key factors influencing survival in patients with advanced ovarian carcinoma 
 
 **Author:** Charlotte Daumal   
-**Context:** This project was completed as part of the *Applied Biostatistics* course taught by Prof. Darlene Goldstein
+**Context:** This project was completed as part of the *Applied Biostatistics* course taught by Prof. Darlene Goldstein  
 **Language:** R  
-**Date:** June 2024
+**Date:** June 2024  
 
 ---
 
